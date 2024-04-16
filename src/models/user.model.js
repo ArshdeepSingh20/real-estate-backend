@@ -21,7 +21,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, "password is required"],
     },
-    avator: {
+    avatar: {
       type:String,
       default:'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-Images.png'
     }
