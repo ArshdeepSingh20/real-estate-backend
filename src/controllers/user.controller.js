@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js";
 import { errorHandler } from "../utils/ApiError.js";
 import bcryptjs from "bcryptjs";
+import { Listing } from "../models/listing.model.js";
 
 export const updateUser = async (req, res, next) => {
   if (!req.user) {
@@ -35,13 +36,37 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
-    if (req.user.id !== req.params.id)
-      return next(errorHandler(401, 'You can only delete your own account!'));
+  if (req.user.id !== req.params.id)
+    return next(errorHandler(401, "You can only delete your own account!"));
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.clearCookie("access_token");
+    res.status(200).json("User has been deleted!");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserListings = async (req, res, next) => {
+  if (req.user.id === req.params.id) {
     try {
-      await User.findByIdAndDelete(req.params.id);
-      res.clearCookie('access_token');
-      res.status(200).json('User has been deleted!');
-    } catch (error) {
-      next(error);
-    }
-  };
+      const listings = await Listing.find({ creator: req.params.id });
+      res.status(200).json(listings);
+    } catch (error) {}
+  } else {
+    return next(errorHandler(401, "You can only access your own listings"));
+  }
+};
+
+export const getUsers = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return next(errorHandler(404, "User not found!!"));
+
+    const { password: pass, ...rest } = user._doc;
+    console.log(rest);
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
