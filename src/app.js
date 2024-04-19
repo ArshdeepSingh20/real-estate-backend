@@ -16,6 +16,10 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 // app.use(express.static("public"))
 app.use(cookieParser());
 
+app.use("/", (req, res) => {
+  res.send("ok");
+});
+
 //routes import
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";

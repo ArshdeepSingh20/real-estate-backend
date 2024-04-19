@@ -9,7 +9,6 @@ import { verifyToken } from "../middlewares/verifyUser.js";
 
 const router = Router();
 
-router.get("/");
 router.post("/update/:id", verifyToken, updateUser);
 router.delete("/delete/:id", verifyToken, deleteUser);
 router.get("/listings/:id", verifyToken, getUserListings);
